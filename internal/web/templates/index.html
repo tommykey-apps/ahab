@@ -1,0 +1,14 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>ahab</title>
+<table>
+  <tr><th>NAME<th>IMAGE<th>STATE<th>PORTS<th>NETWORKS
+  {{range .}}
+  <tr>
+    <td>{{.Name}}
+    <td>{{.Image}}
+    <td>{{.State}}
+    <td>{{range .Ports}}{{.Public}}&rarr;{{.Private}} {{end}}
+    <td>{{range .Networks}}{{.}} {{end}}
+  {{end}}
+</table>
