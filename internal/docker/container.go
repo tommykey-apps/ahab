@@ -60,11 +60,11 @@ func (c * Client) Containers(ctx context.Context) ([]Container, error) {
 			}
 		}
 		for n := range r.NetworkSettings.Networks {
-			c.Networks := append(c.Networks, n)
+			c.Networks = append(c.Networks, n)
 		}
 		sort.Strings(c.Networks)
 		cs = append(cs, c)
 	}
-	sort.Slice(cs, func(i, j int) boolean { return cs[i].Name < cs[j].Name})
+	sort.Slice(cs, func(i, j int) bool { return cs[i].Name < cs[j].Name})
 	return cs, nil
 }

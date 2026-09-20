@@ -9,9 +9,10 @@ import (
 	"github.com/tommykey-apps/ahab/internal/docker"
 )
 
+//go:embed templates
 var assets embed.FS
 
-var tmpl = template.Must(templateParseFS(assets, "templates/*.html"))
+var tmpl = template.Must(template.ParseFS(assets, "templates/*.html"))
 
 type Server struct {
 	docker *docker.Client
@@ -19,7 +20,7 @@ type Server struct {
 }
 
 func NewServer(dc *docker.Client) *Server {
-	s := &Server{docker: dc, mux: http.NewServMux()}
+	s := &Server{docker: dc, mux: http.NewServeMux()}
 	s.mux.HandleFunc("GET /", s.index)
 	return s
 }
@@ -35,6 +36,6 @@ func (s *Server) index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := tmpl.ExecuteTemplate(w, "index.html", cs); err != nil {
-		log.Printf("render %v", err)	
+		log.Printf("render %v",)	
 	}
 }
