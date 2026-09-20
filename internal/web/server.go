@@ -16,7 +16,7 @@ var tmpl = template.Must(template.ParseFS(assets, "templates/*.html"))
 
 type Server struct {
 	docker *docker.Client
-	mux *http.ServeMux
+	mux    *http.ServeMux
 }
 
 func NewServer(dc *docker.Client) *Server {
@@ -36,6 +36,6 @@ func (s *Server) index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := tmpl.ExecuteTemplate(w, "index.html", cs); err != nil {
-		log.Printf("render %v",)	
+		log.Printf("render %v", err)
 	}
 }

@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-const apiVersion="v1.44"
+const apiVersion = "v1.44"
 
 type Client struct {
 	http *http.Client

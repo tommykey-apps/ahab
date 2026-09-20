@@ -9,34 +9,34 @@ import (
 )
 
 type Container struct {
-	ID string
-	Name string
-	Image string
-	State string
-	Ports []Port
+	ID       string
+	Name     string
+	Image    string
+	State    string
+	Ports    []Port
 	Networks []string
 }
 
 type Port struct {
-	Public int 
+	Public  int
 	Private int
 }
 
 type apiContainer struct {
-	ID string `json:"Id"`
+	ID    string   `json:"Id"`
 	Names []string `json:"Names"`
-	Image string `json:"Image"`
-	State string `json:"State"`
+	Image string   `json:"Image"`
+	State string   `json:"State"`
 	Ports []struct {
 		PrivatePort int `json:"PrivatePort"`
-		PublicPort int `json:"PublicPort"`
+		PublicPort  int `json:"PublicPort"`
 	} `json:"Ports"`
 	NetworkSettings struct {
 		Networks map[string]struct{} `json:"Networks"`
-	}`json:"NetworkSettings"`
+	} `json:"NetworkSettings"`
 }
 
-func (c * Client) Containers(ctx context.Context) ([]Container, error) {
+func (c *Client) Containers(ctx context.Context) ([]Container, error) {
 	body, err := c.get(ctx, "/containers/json?all=1")
 	if err != nil {
 		return nil, err
@@ -65,6 +65,6 @@ func (c * Client) Containers(ctx context.Context) ([]Container, error) {
 		sort.Strings(c.Networks)
 		cs = append(cs, c)
 	}
-	sort.Slice(cs, func(i, j int) bool { return cs[i].Name < cs[j].Name})
+	sort.Slice(cs, func(i, j int) bool { return cs[i].Name < cs[j].Name })
 	return cs, nil
 }
