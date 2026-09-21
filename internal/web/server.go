@@ -10,7 +10,7 @@ import (
 	"github.com/tommykey-apps/ahab/internal/state"
 )
 
-//go:embed templates
+//go:embed templates static
 var assets embed.FS
 
 var tmpl = template.Must(template.ParseFS(assets, "templates/*.html"))
@@ -21,8 +21,8 @@ type Server struct {
 	mux    *http.ServeMux
 }
 
-func NewServer(dc *docker.Client) *Server {
-	s := &Server{docker: dc, mux: http.NewServeMux()}
+func NewServer(dc *docker.Client, store *state.Store) *Server {
+	s := &Server{docker: dc, store: store, mux: http.NewServeMux()}
 	s.mux.HandleFunc("GET /", s.index)
 	s.mux.HandleFunc("GET /events", s.sse)
 	s.mux.Handle("GET /static/", http.FileServerFS(assets))
