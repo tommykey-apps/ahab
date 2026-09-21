@@ -34,12 +34,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) index(w http.ResponseWriter, r *http.Request) {
-	cs, err := s.docker.Containers(r.Context())
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadGateway)
-		return
-	}
-	if err := tmpl.ExecuteTemplate(w, "index.html", cs); err != nil {
+	if err := tmpl.ExecuteTemplate(w, "index.html", nil); err != nil {
 		log.Printf("render %v", err)
 	}
 }

@@ -32,7 +32,7 @@ func (s *Server) sse(w http.ResponseWriter, r *http.Request) {
 	for {
 		select {
 		case cs := <-ch:
-			if err := send(cs); err!=nil {
+			if err := send(cs); err != nil {
 				return
 			}
 		case <-r.Context().Done():

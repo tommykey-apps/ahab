@@ -7,10 +7,10 @@ import (
 )
 
 type Event struct {
-	Action string `json:Action`
-	Actor struct {
-		ID string `json:ID`
-	} `json:Actor`
+	Action string `json:"Action"`
+	Actor  struct {
+		ID string `json:"ID"`
+	} `json:"Actor"`
 }
 
 func (c *Client) Events(ctx context.Context, out chan<- Event) error {

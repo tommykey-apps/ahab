@@ -15,7 +15,7 @@ import (
 func main() {
 	addr := flag.String("addr", ":8080", "listen address")
 	flag.Parse()
-	
+
 	ctx := context.Background()
 	dc := docker.New()
 	store := state.New()
@@ -42,7 +42,7 @@ func main() {
 		}
 	}()
 
-	go func(){
+	go func() {
 		for range evs {
 			refresh()
 		}

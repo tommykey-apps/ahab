@@ -5,18 +5,18 @@ import "github.com/tommykey-apps/ahab/internal/docker"
 type list = []docker.Container
 
 type Store struct {
-	replace chan list
-	queries chan chan list
+	replace   chan list
+	queries   chan chan list
 	subscribe chan chan list
-	unsub chan chan list
+	unsub     chan chan list
 }
 
 func New() *Store {
 	s := &Store{
-		replace: make(chan list),
-		queries: make(chan chan list),
+		replace:   make(chan list),
+		queries:   make(chan chan list),
 		subscribe: make(chan chan list),
-		unsub: make(chan chan list),
+		unsub:     make(chan chan list),
 	}
 	go s.loop()
 	return s
@@ -27,7 +27,7 @@ func (s *Store) loop() {
 	subs := map[chan list]bool{}
 
 	for {
-		select{
+		select {
 		case cs := <-s.replace:
 			containers = cs
 			for ch := range subs {
@@ -47,7 +47,7 @@ func (s *Store) loop() {
 	}
 }
 
-func (s *Store) Replace(cs list) {s.replace <- cs}
+func (s *Store) Replace(cs list) { s.replace <- cs }
 
 func (s *Store) Get() list {
 	reply := make(chan list)
@@ -57,9 +57,8 @@ func (s *Store) Get() list {
 
 func (s *Store) Subscribe() chan list {
 	ch := make(chan list, 1)
-	s.subscribe <- ch 
+	s.subscribe <- ch
 	return ch
 }
 
 func (s *Store) Unsubscribe(ch chan list) { s.unsub <- ch }
-
