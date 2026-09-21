@@ -2,9 +2,11 @@ package web
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"runtime"
 
 	"github.com/tommykey-apps/ahab/internal/docker"
 	"github.com/tommykey-apps/ahab/internal/state"
@@ -25,6 +27,7 @@ func NewServer(dc *docker.Client, store *state.Store) *Server {
 	s := &Server{docker: dc, store: store, mux: http.NewServeMux()}
 	s.mux.HandleFunc("GET /", s.index)
 	s.mux.HandleFunc("GET /events", s.sse)
+	s.mux.HandleFunc("GET /debug/goroutines", s.debugGoroutine)
 	s.mux.Handle("GET /static/", http.FileServerFS(assets))
 	return s
 }
@@ -37,4 +40,8 @@ func (s *Server) index(w http.ResponseWriter, r *http.Request) {
 	if err := tmpl.ExecuteTemplate(w, "index.html", nil); err != nil {
 		log.Printf("render %v", err)
 	}
+}
+
+func (s *Server) debugGoroutine(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, runtime.NumGoroutine())
 }
