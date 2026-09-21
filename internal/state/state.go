@@ -64,10 +64,10 @@ func (s *Store) loop() {
 
 func (s *Store) Replace(cs []docker.Container) { s.replace <- cs }
 
-func (s *Store) Get() chan []View {
+func (s *Store) Get() []View {
 	reply := make(chan []View)
 	s.queries <- reply
-	return reply
+	return <-reply
 }
 
 func (s *Store) Subscribe() chan []View {

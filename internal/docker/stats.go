@@ -21,14 +21,14 @@ type cpuStats struct {
 
 type apiStats struct {
 	CPU    cpuStats `json:"cpu_stats"`
-	PreCPU cpuStats `json:"precpu_stats`
+	PreCPU cpuStats `json:"precpu_stats"`
 	Memory struct {
 		Usage uint64 `json:"usage"`
 	} `json:"memory_stats"`
 }
 
 func (c *Client) Stats(ctx context.Context, id string, out chan<- Stat) error {
-	body, err := c.get(ctx, "containers/"+id+"/stats?stream=1")
+	body, err := c.get(ctx, "/containers/"+id+"/stats?stream=1")
 	if err != nil {
 		return err
 	}
