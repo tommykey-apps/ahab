@@ -412,7 +412,7 @@ const volumes = makePanel("volumes", {
     { key: "Name", label: t("col.name"), sortable: true, cls: "cell-name", value: (v) => v.Name },
     { key: "Driver", label: t("col.driver"), sortable: true, cls: "cell-nowrap", value: (v) => v.Driver },
     { key: "Created", label: t("col.created"), sortable: true, cls: "cell-nowrap", value: (v) => v.Created, html: (v) => esc(fmtDate(v.Created)) },
-    { key: "InUse", label: t("col.inUse"), sortable: true, value: (v) => (v.InUse ? 1 : 0), html: (v) => (v.InUse ? `<span class="dads-chip-label" data-style="outlined" data-color="green">${esc(t("yes"))}</span>` : '<span class="cell-muted">-</span>') },
+    { key: "InUse", label: t("col.status"), sortable: true, value: (v) => (v.InUse ? 1 : 0), html: (v) => `<span class="dads-chip-label" data-style="outlined" data-color="${v.InUse ? "green" : "gray"}">${esc(t(v.InUse ? "volume.inUse" : "volume.unused"))}</span>` },
     { key: "actions", label: t("col.actions"), sortable: false, cls: "cell-actions", value: () => "", html: (v, p) => `<div class="actions">${button(t("action.delete"), "delete", v.Name, { danger: true, disabled: v.InUse || p.busy.has(v.Name), size: mobile.matches ? "sm" : "xs" })}</div>` },
   ],
   onAction: async (p, action, name) => {
