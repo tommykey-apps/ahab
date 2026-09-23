@@ -201,13 +201,6 @@ body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  body,
-  .app-header,
-  .logs__bar,
-  .dads-tab__panel,
-  .dads-table__table th {
-    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
-  }
   .dads-button,
   .dads-tab__tab,
   .dads-chip-label,
@@ -220,11 +213,6 @@ body {
     transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
   }
   .dads-switch-mode__thumb { transition: left 200ms ease, background-color 200ms ease; }
-  :root[data-theme-transition] *,
-  :root[data-theme-transition] *::before,
-  :root[data-theme-transition] *::after {
-    transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease, fill 300ms ease, stroke 300ms ease, box-shadow 300ms ease !important;
-  }
   .dads-modal-dialog[open],
   .dads-modal-dialog[open]::backdrop,
   .notices > *,

@@ -11,13 +11,8 @@ function currentTheme() {
   return document.documentElement.dataset.theme || (darkMedia.matches ? "dark" : "light");
 }
 
-let themeTransitionTimer = 0;
 function applyTheme(theme, persist) {
-  const root = document.documentElement;
-  root.dataset.themeTransition = "";
-  clearTimeout(themeTransitionTimer);
-  themeTransitionTimer = setTimeout(() => delete root.dataset.themeTransition, 350);
-  root.dataset.theme = theme;
+  document.documentElement.dataset.theme = theme;
   if (persist) {
     try { localStorage.setItem(THEME_KEY, theme); } catch {}
   }
