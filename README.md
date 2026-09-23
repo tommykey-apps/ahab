@@ -1,4 +1,9 @@
-# ahab
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/banner-dark.png">
+    <img src="docs/banner.png" alt="ahab: Docker の状態とコンテナのつながりを一望する常駐ダッシュボード" width="720">
+  </picture>
+</p>
 
 Docker の状態とコンテナ同士のつながりをブラウザで一望する常駐ダッシュボード。
 
