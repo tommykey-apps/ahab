@@ -18,15 +18,15 @@ type Client struct {
 
 func New() *Client {
 	sock := socketPath()
-	return &Client{
-		http: &http.Client{
-			Transport: &http.Transport{
-				DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
-					return (&net.Dialer{}).DialContext(ctx, "unix", sock)
-				},
-			},
+	return NewWithTransport(&http.Transport{
+		DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
+			return (&net.Dialer{}).DialContext(ctx, "unix", sock)
 		},
-	}
+	})
+}
+
+func NewWithTransport(t http.RoundTripper) *Client {
+	return &Client{http: &http.Client{Transport: t}}
 }
 
 func socketPath() string {
