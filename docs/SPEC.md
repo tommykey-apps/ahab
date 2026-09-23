@@ -30,6 +30,7 @@ docker run -d --name ahab \
 - コンテナ一覧（名前 / イメージ / 状態 / 公開ポート / ネットワーク / CPU / メモリ）
 - start / stop / restart
 - ログ追従
+- 日本語 / English の切替、明 / 暗の切替（OS 設定に追随）
 
 Docker の `/events` と `/stats` をストリームで読み、Server-Sent Events でブラウザに push する。ポーリングしない。
 
@@ -42,7 +43,7 @@ Docker の `/events` と `/stats` をストリームで読み、Server-Sent Even
 ## 技術方針
 
 - 標準ライブラリのみ。外部モジュールを追加しない
-- フロントはビルド不要。`html/template` + SSE + 素の JavaScript
+- フロントはビルド不要。`html/template` + SSE + 素の JavaScript。部品はデジタル庁デザインシステムの HTML 版を `internal/web/static/dads/` に複製、書体と mermaid も同梱
 - 状態を持つのは単一の goroutine。他は channel 経由
 - `go:embed` で単一バイナリ。ベースイメージは `scratch`
 

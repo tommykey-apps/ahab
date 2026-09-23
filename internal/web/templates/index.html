@@ -1,13 +1,296 @@
 <!doctype html>
+<html lang="ja">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ahab</title>
-<table>
-  <thead>
-    <tr><th>NAME<th>IMAGE<th>STATE<th>CPU<th>MEM<th>PORTS<th>NETWORKS<th>
-  </thead>
-  <tbody></tbody>
-</table>
+<meta name="color-scheme" content="light dark">
+<script>
+  (function () {
+    var q = new URLSearchParams(location.search);
+    var theme = q.get("theme");
+    try { theme = theme || localStorage.getItem("ahab.theme"); } catch (e) {}
+    if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+    var lang = q.get("lang");
+    try { lang = lang || localStorage.getItem("ahab.lang"); } catch (e) {}
+    if (lang === "en") document.documentElement.lang = "en";
+  })();
+</script>
+<link rel="stylesheet" href="/static/dads/tokens.css">
+<link rel="stylesheet" href="/static/dads/global.css">
+<link rel="stylesheet" href="/static/dads/heading.css">
+<link rel="stylesheet" href="/static/dads/link.css">
+<link rel="stylesheet" href="/static/dads/button.css">
+<link rel="stylesheet" href="/static/dads/table.css">
+<link rel="stylesheet" href="/static/dads/chip-label.css">
+<link rel="stylesheet" href="/static/dads/notification-banner.css">
+<link rel="stylesheet" href="/static/dads/tab.css">
+<link rel="stylesheet" href="/static/dads/switch-mode.css">
+<link rel="stylesheet" href="/static/dads/menu-list.css">
+<link rel="stylesheet" href="/static/dads/menu-list-box.css">
+<link rel="stylesheet" href="/static/dads/language-selector.css">
+<link rel="stylesheet" href="/static/dads/modal-dialog.css">
+<link rel="stylesheet" href="/static/dads/select.css">
+<link rel="stylesheet" href="/static/dads/input-text.css">
+<link rel="stylesheet" href="/static/dads/progress-indicator.css">
+<link rel="stylesheet" href="/static/dads/description-list.css">
+<link rel="stylesheet" href="/static/theme.css">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
 
-<pre id="logs"></pre>
+<header class="app-header">
+  <div class="app-header__inner">
+    <a class="app-header__brand" href="/">ahab</a>
+    <span class="dads-chip-label app-header__status" data-style="outlined" data-color="gray" id="conn-status" role="status" data-i18n="status.connecting">接続しています</span>
+    <div class="app-header__tools">
+      <dads-switch-mode class="dads-switch-mode" id="theme-switch">
+        <span class="dads-u-visually-hidden" data-i18n="theme.label">表示</span>
+        <button class="dads-switch-mode__option" type="button" role="switch" aria-checked="true" data-js-option data-theme-option="light">
+          <span class="dads-switch-mode__label" data-i18n="theme.light">明</span>
+        </button>
+        <span class="dads-switch-mode__control" aria-hidden="true">
+          <span class="dads-switch-mode__rail">
+            <span class="dads-switch-mode__thumb"></span>
+          </span>
+        </span>
+        <button class="dads-switch-mode__option" type="button" role="switch" aria-checked="false" data-js-option data-theme-option="dark">
+          <span class="dads-switch-mode__label" data-i18n="theme.dark">暗</span>
+        </button>
+      </dads-switch-mode>
 
-<script src="/static/app.js"></script>
+      <dads-language-selector class="dads-language-selector" id="lang-selector">
+        <div class="dads-menu-list-box">
+          <button id="language-selector-opener" class="dads-menu-list-box__opener" type="button" data-js-opener aria-controls="language-selector-popup" aria-expanded="false" data-size="sm" data-style="text" data-text-weight="normal">
+            <svg class="dads-menu-list-box__opener-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentcolor" aria-hidden="true">
+              <path d="M12 21.5A9.5 9.5 0 0 1 2.5 12c0-5.2 4.3-9.5 9.5-9.5s9.6 4.3 9.5 9.5c0 5.2-4.3 9.5-9.5 9.5Zm0-1.5c1-1.3 1.7-2.8 2.1-4.3H10c.4 1.5 1 3 2.1 4.3Zm-2-.3c-.8-1.2-1.4-2.6-1.7-4H5c1 2 3 3.5 5.2 4Zm4 0c2.2-.5 4-2 5-4h-3.3c-.4 1.4-1 2.8-1.8 4Zm-9.7-5.5H8a13 13 0 0 1 0-4.4H4.3a8 8 0 0 0 0 4.4Zm5.2 0h5c.2-1.5.2-3 0-4.4h-5c-.2 1.5-.2 3 0 4.4Zm6.5 0h3.7a8 8 0 0 0 0-4.4H16c.2 1.5.2 3 0 4.4Zm-.3-5.9H19c-1-2-3-3.5-5.2-4 .8 1.2 1.4 2.6 1.8 4Zm-5.8 0H14A12 12 0 0 0 12 4a12 12 0 0 0-2.1 4.3Zm-5 0h3.4c.4-1.4 1-2.8 1.8-4-2.3.5-4.1 2-5.2 4Z"/>
+            </svg>
+            Language
+            <svg class="dads-menu-list-box__opener-arrow" width="16" height="16" viewBox="0 0 24 24" fill="currentcolor" aria-hidden="true">
+              <path d="m20.5 6.6-8 8-8-8L3.1 8l9.4 9.4L21.9 8l-1.4-1.4Z"/>
+            </svg>
+          </button>
+          <div id="language-selector-popup" class="dads-menu-list-box__popup" data-js-popup hidden>
+            <ul class="dads-menu-list" data-js-menu>
+              <li>
+                <a class="dads-menu-list__item" data-js-menu-item href="?lang=ja" lang="ja" hreflang="ja" data-lang="ja" data-type="box" data-size="regular">
+                  <svg class="dads-menu-list__front-icon dads-language-selector__check" width="24" height="24" viewBox="0 0 24 24" fill="currentcolor" aria-hidden="true">
+                    <path d="m9.5 18-5.7-5.7 1.5-1.4 4.2 4.3L18.7 6l1.4 1.4L9.5 18Z"/>
+                  </svg>
+                  <span class="dads-menu-list__label">日本語</span>
+                </a>
+              </li>
+              <li>
+                <a class="dads-menu-list__item" data-js-menu-item href="?lang=en" lang="en" hreflang="en" data-lang="en" data-type="box" data-size="regular">
+                  <svg class="dads-menu-list__front-icon dads-language-selector__check" width="24" height="24" viewBox="0 0 24 24" fill="currentcolor" aria-hidden="true">
+                    <path d="m9.5 18-5.7-5.7 1.5-1.4 4.2 4.3L18.7 6l1.4 1.4L9.5 18Z"/>
+                  </svg>
+                  <span class="dads-menu-list__label">English</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </dads-language-selector>
+    </div>
+  </div>
+</header>
+
+<main class="app-main">
+  <div id="notices" class="notices" aria-live="polite"></div>
+
+  <div class="dads-heading app-main__heading" data-size="24">
+    <h1 id="page-heading" class="dads-heading__heading" data-i18n="app.title">Docker の状態</h1>
+  </div>
+
+  <dads-tab class="dads-tab" id="tabs">
+    <ul class="dads-tab__list" data-js-tab-list aria-labelledby="page-heading">
+      <li><a class="dads-tab__tab" data-js-tab href="#panel-containers" aria-current="true"><span data-i18n="tab.containers">コンテナ</span></a></li>
+      <li><a class="dads-tab__tab" data-js-tab href="#panel-images"><span data-i18n="tab.images">イメージ</span></a></li>
+      <li><a class="dads-tab__tab" data-js-tab href="#panel-volumes"><span data-i18n="tab.volumes">ボリューム</span></a></li>
+      <li><a class="dads-tab__tab" data-js-tab href="#panel-graph"><span data-i18n="tab.graph">構成図</span></a></li>
+    </ul>
+    <div class="dads-tab__panels">
+
+      <div class="dads-tab__panel panel" id="panel-containers" data-resource="containers">
+        <div class="toolbar">
+          <span class="dads-input-text toolbar__filter">
+            <label class="dads-u-visually-hidden" for="containers-filter" data-i18n="filter.label">絞り込み</label>
+            <input class="dads-input-text__input" id="containers-filter" type="search" data-size="sm" autocomplete="off" data-filter data-i18n-attr="placeholder:filter.containers" placeholder="名前・イメージで絞り込み">
+          </span>
+          <span class="dads-select">
+            <label class="dads-u-visually-hidden" for="containers-state" data-i18n="state.label">状態</label>
+            <span class="dads-select__control">
+              <select class="dads-select__select" id="containers-state" data-size="sm" data-state-filter>
+                <option value="" data-i18n="state.all">すべての状態</option>
+                <option value="running" data-i18n="state.running">実行中</option>
+                <option value="exited" data-i18n="state.exited">停止</option>
+                <option value="paused" data-i18n="state.paused">一時停止</option>
+                <option value="created" data-i18n="state.created">作成済み</option>
+              </select>
+              <svg class="dads-select__chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17L3 8L4 7L12 15L20 7L21 8L12 17Z" fill="currentcolor"/></svg>
+            </span>
+          </span>
+          <span class="toolbar__count" data-count></span>
+          <span class="dads-select toolbar__page-size">
+            <label class="dads-u-visually-hidden" for="containers-page-size" data-i18n="pageSize.label">表示件数</label>
+            <span class="dads-select__control">
+              <select class="dads-select__select" id="containers-page-size" data-size="sm" data-page-size>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="0" data-i18n="pageSize.all">すべて</option>
+              </select>
+              <svg class="dads-select__chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17L3 8L4 7L12 15L20 7L21 8L12 17Z" fill="currentcolor"/></svg>
+            </span>
+          </span>
+        </div>
+        <div class="panel__state" data-state-loading>
+          <dads-progress-indicator class="dads-progress-indicator" data-type="inlined" intent="passive">
+            <svg class="dads-progress-indicator__spinner" data-js-indicator width="24" height="24" viewBox="0 0 24 24" stroke="currentcolor" fill="none" aria-hidden="true">
+              <circle class="dads-progress-indicator__track" cx="12" cy="12" r="8" stroke-width="3"></circle>
+              <g><g><circle class="dads-progress-indicator__bar" cx="12" cy="12" r="8" stroke-width="3" pathLength="100"></circle></g></g>
+              <circle class="dads-progress-indicator__border" cx="12" cy="12" r="9.5" stroke-width="1"></circle>
+            </svg>
+            <span class="dads-progress-indicator__label" data-js-label data-i18n="loading">読み込み中</span>
+          </dads-progress-indicator>
+        </div>
+        <div class="panel__state" data-state-error hidden></div>
+        <p class="panel__state panel__empty" data-state-empty hidden></p>
+        <dads-scroll-shadow class="table-scroll" data-state-table hidden>
+          <div class="dads-table" data-size="dense">
+            <table class="dads-table__table" data-cell-border="bottom">
+              <thead><tr data-head></tr></thead>
+              <tbody data-body></tbody>
+            </table>
+          </div>
+        </dads-scroll-shadow>
+        <nav class="pager" data-pager hidden>
+          <button class="dads-button" type="button" data-size="sm" data-type="outline" data-pager-prev data-i18n="pager.prev">前へ</button>
+          <span class="pager__pos" data-pager-pos></span>
+          <button class="dads-button" type="button" data-size="sm" data-type="outline" data-pager-next data-i18n="pager.next">次へ</button>
+        </nav>
+
+        <section class="logs" id="logs" hidden aria-labelledby="logs-heading">
+          <div class="logs__bar">
+            <h2 class="logs__heading" id="logs-heading"></h2>
+            <label class="logs__follow"><input type="checkbox" id="logs-follow" checked> <span data-i18n="logs.follow">自動スクロール</span></label>
+            <button class="dads-button" type="button" data-size="xs" data-type="outline" id="logs-clear" data-i18n="action.clear">消去</button>
+            <button class="dads-button" type="button" data-size="xs" data-type="outline" id="logs-close" data-i18n="action.close">閉じる</button>
+          </div>
+          <pre class="logs__out" id="logs-out" tabindex="0"></pre>
+        </section>
+      </div>
+
+      <div class="dads-tab__panel panel" id="panel-images" data-resource="images">
+        <div class="toolbar">
+          <span class="dads-input-text toolbar__filter">
+            <label class="dads-u-visually-hidden" for="images-filter" data-i18n="filter.label">絞り込み</label>
+            <input class="dads-input-text__input" id="images-filter" type="search" data-size="sm" autocomplete="off" data-filter data-i18n-attr="placeholder:filter.images" placeholder="タグ・ID で絞り込み">
+          </span>
+          <span class="toolbar__count" data-count></span>
+          <button class="dads-button" type="button" data-size="sm" data-type="outline" data-reload data-i18n="action.reload">再読み込み</button>
+        </div>
+        <div class="panel__state" data-state-loading hidden>
+          <dads-progress-indicator class="dads-progress-indicator" data-type="inlined" intent="passive">
+            <svg class="dads-progress-indicator__spinner" data-js-indicator width="24" height="24" viewBox="0 0 24 24" stroke="currentcolor" fill="none" aria-hidden="true">
+              <circle class="dads-progress-indicator__track" cx="12" cy="12" r="8" stroke-width="3"></circle>
+              <g><g><circle class="dads-progress-indicator__bar" cx="12" cy="12" r="8" stroke-width="3" pathLength="100"></circle></g></g>
+              <circle class="dads-progress-indicator__border" cx="12" cy="12" r="9.5" stroke-width="1"></circle>
+            </svg>
+            <span class="dads-progress-indicator__label" data-js-label data-i18n="loading">読み込み中</span>
+          </dads-progress-indicator>
+        </div>
+        <div class="panel__state" data-state-error hidden></div>
+        <p class="panel__state panel__empty" data-state-empty hidden></p>
+        <dads-scroll-shadow class="table-scroll" data-state-table hidden>
+          <div class="dads-table" data-size="dense">
+            <table class="dads-table__table" data-cell-border="bottom">
+              <thead><tr data-head></tr></thead>
+              <tbody data-body></tbody>
+            </table>
+          </div>
+        </dads-scroll-shadow>
+      </div>
+
+      <div class="dads-tab__panel panel" id="panel-volumes" data-resource="volumes">
+        <div class="toolbar">
+          <span class="dads-input-text toolbar__filter">
+            <label class="dads-u-visually-hidden" for="volumes-filter" data-i18n="filter.label">絞り込み</label>
+            <input class="dads-input-text__input" id="volumes-filter" type="search" data-size="sm" autocomplete="off" data-filter data-i18n-attr="placeholder:filter.volumes" placeholder="名前で絞り込み">
+          </span>
+          <span class="toolbar__count" data-count></span>
+          <button class="dads-button" type="button" data-size="sm" data-type="outline" data-reload data-i18n="action.reload">再読み込み</button>
+        </div>
+        <div class="panel__state" data-state-loading hidden>
+          <dads-progress-indicator class="dads-progress-indicator" data-type="inlined" intent="passive">
+            <svg class="dads-progress-indicator__spinner" data-js-indicator width="24" height="24" viewBox="0 0 24 24" stroke="currentcolor" fill="none" aria-hidden="true">
+              <circle class="dads-progress-indicator__track" cx="12" cy="12" r="8" stroke-width="3"></circle>
+              <g><g><circle class="dads-progress-indicator__bar" cx="12" cy="12" r="8" stroke-width="3" pathLength="100"></circle></g></g>
+              <circle class="dads-progress-indicator__border" cx="12" cy="12" r="9.5" stroke-width="1"></circle>
+            </svg>
+            <span class="dads-progress-indicator__label" data-js-label data-i18n="loading">読み込み中</span>
+          </dads-progress-indicator>
+        </div>
+        <div class="panel__state" data-state-error hidden></div>
+        <p class="panel__state panel__empty" data-state-empty hidden></p>
+        <dads-scroll-shadow class="table-scroll" data-state-table hidden>
+          <div class="dads-table" data-size="dense">
+            <table class="dads-table__table" data-cell-border="bottom">
+              <thead><tr data-head></tr></thead>
+              <tbody data-body></tbody>
+            </table>
+          </div>
+        </dads-scroll-shadow>
+      </div>
+
+      <div class="dads-tab__panel panel" id="panel-graph" data-resource="graph">
+        <div class="toolbar">
+          <button class="dads-button" type="button" data-size="sm" data-type="outline" data-reload data-i18n="action.reload">再読み込み</button>
+        </div>
+        <div class="panel__state" data-state-loading hidden>
+          <dads-progress-indicator class="dads-progress-indicator" data-type="inlined" intent="passive">
+            <svg class="dads-progress-indicator__spinner" data-js-indicator width="24" height="24" viewBox="0 0 24 24" stroke="currentcolor" fill="none" aria-hidden="true">
+              <circle class="dads-progress-indicator__track" cx="12" cy="12" r="8" stroke-width="3"></circle>
+              <g><g><circle class="dads-progress-indicator__bar" cx="12" cy="12" r="8" stroke-width="3" pathLength="100"></circle></g></g>
+              <circle class="dads-progress-indicator__border" cx="12" cy="12" r="9.5" stroke-width="1"></circle>
+            </svg>
+            <span class="dads-progress-indicator__label" data-js-label data-i18n="loading">読み込み中</span>
+          </dads-progress-indicator>
+        </div>
+        <div class="panel__state" data-state-error hidden></div>
+        <p class="panel__state panel__empty" data-state-empty hidden></p>
+        <div class="graph" id="graph" data-state-table hidden></div>
+      </div>
+
+    </div>
+  </dads-tab>
+</main>
+
+<dialog id="confirm" class="dads-modal-dialog" aria-labelledby="confirm-title">
+  <div class="dads-modal-dialog__dialog">
+    <div class="dads-modal-dialog__header">
+      <h2 id="confirm-title" class="dads-modal-dialog__heading" tabindex="-1" autofocus></h2>
+      <button class="dads-modal-dialog__close" type="button" data-confirm-cancel>
+        <svg class="dads-modal-dialog__close-icon" width="24" height="24" viewBox="0 0 120 120" aria-hidden="true">
+          <path d="M32 95L25 88L53 60L25 32L32 25L60 53L88 25L95 32L67 60L95 88L88 95L60 67L32 95Z" fill="currentcolor"/>
+        </svg>
+        <span data-i18n="action.close">閉じる</span>
+      </button>
+    </div>
+    <div class="dads-modal-dialog__body"><p id="confirm-body"></p></div>
+    <div class="dads-modal-dialog__actions confirm__actions">
+      <button class="dads-button" type="button" data-size="md" data-type="outline" data-confirm-cancel data-i18n="action.cancel">キャンセル</button>
+      <button class="dads-button" type="button" data-size="md" data-type="solid-fill" data-danger data-confirm-ok></button>
+    </div>
+  </div>
+</dialog>
+
+<script type="module" src="/static/dads/tab.js"></script>
+<script type="module" src="/static/dads/switch-mode.js"></script>
+<script type="module" src="/static/dads/language-selector.js"></script>
+<script type="module" src="/static/dads/progress-indicator.js"></script>
+<script type="module" src="/static/dads/scroll-shadow.js"></script>
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>
