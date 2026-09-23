@@ -1,9 +1,6 @@
 const dict = {
   ja: {
     "app.title": "Docker の状態",
-    "status.connecting": "接続しています",
-    "status.connected": "接続中",
-    "status.reconnecting": "再接続中",
     "theme.label": "表示",
     "theme.light": "明",
     "theme.dark": "暗",
@@ -93,9 +90,6 @@ const dict = {
   },
   en: {
     "app.title": "Docker status",
-    "status.connecting": "Connecting",
-    "status.connected": "Connected",
-    "status.reconnecting": "Reconnecting",
     "theme.label": "Theme",
     "theme.light": "Light",
     "theme.dark": "Dark",

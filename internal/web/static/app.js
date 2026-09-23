@@ -312,10 +312,8 @@ const containers = makePanel("containers", {
 });
 
 function connectEvents() {
-  const status = $("#conn-status");
-  const setStatus = (key, color) => { status.dataset.i18n = key; status.textContent = t(key); status.dataset.color = color; };
   const es = new EventSource("/events");
-  es.onopen = () => { setStatus("status.connected", "green"); dismissNotice("connection"); };
+  es.onopen = () => dismissNotice("connection");
   es.onmessage = (e) => {
     containers.data = JSON.parse(e.data) || [];
     containers.error = null;
@@ -323,7 +321,6 @@ function connectEvents() {
     if (graph.root.offsetParent !== null) scheduleGraph();
   };
   es.onerror = () => {
-    setStatus("status.reconnecting", "yellow");
     if (containers.data === null) {
       containers.error = new Error(t("error.connection.body"));
       render(containers);
@@ -531,8 +528,6 @@ const panels = { containers, images, volumes, graph };
 
 function renderAll() {
   for (const p of Object.values(panels)) if (p.data !== null || p.error) render(p);
-  const s = $("#conn-status");
-  if (s.dataset.i18n) s.textContent = t(s.dataset.i18n);
   const logs = $("#logs");
   if (!logs.hidden) $("#logs-heading").textContent = t("logs.title", { name: logs.dataset.name });
 }
