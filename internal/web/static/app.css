@@ -90,13 +90,13 @@ body {
   height: calc(24 / 16 * 1rem);
   color: var(--color-key-900);
 }
-.app-header__status { align-self: center; }
 .app-header__tools {
   display: flex;
   align-items: center;
   gap: calc(16 / 16 * 1rem);
   margin-left: auto;
 }
+.app-header .dads-menu-list-box__opener-icon { margin-right: 0; }
 
 .app-main {
   max-width: calc(1440 / 16 * 1rem);
@@ -135,9 +135,10 @@ body {
 .dads-table__table th.cell-name,
 .dads-table__table td.cell-name {
   position: sticky;
-  left: 0;
+  left: calc(-1 * var(--scroll-shadow-padding));
   z-index: 1;
   background-color: var(--color-neutral-white);
+  background-clip: padding-box;
 }
 .dads-table__table th.cell-name { background-color: var(--color-neutral-solid-gray-50); }
 .cell-muted { color: var(--color-neutral-solid-gray-600); }
