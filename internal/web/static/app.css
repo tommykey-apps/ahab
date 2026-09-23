@@ -196,3 +196,35 @@ body {
   .toolbar__page-size { margin-left: 0; }
   .logs__out { height: calc(280 / 16 * 1rem); }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  body,
+  .app-header,
+  .logs__bar,
+  .dads-tab__panel,
+  .dads-table__table th {
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+  }
+  .dads-button,
+  .dads-tab__tab,
+  .dads-chip-label,
+  .dads-menu-list__item,
+  .dads-menu-list-box__opener,
+  .dads-table__sort-button,
+  .dads-input-text__input,
+  .dads-select__select,
+  .pager .dads-button {
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+  }
+  .dads-switch-mode__thumb { transition: left 150ms ease, background-color 150ms ease; }
+  .dads-modal-dialog[open],
+  .dads-modal-dialog[open]::backdrop,
+  .notices > *,
+  .dads-tab__panel:not([hidden]),
+  .dads-menu-list-box__popup:not([hidden]) {
+    animation: ahab-fade-in 150ms ease;
+  }
+  @keyframes ahab-fade-in {
+    from { opacity: 0; }
+  }
+}
