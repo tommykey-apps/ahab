@@ -12,6 +12,7 @@ type Container struct {
 	ID       string
 	Name     string
 	Image    string
+	ImageID  string
 	State    string
 	Ports    []Port
 	Networks []string
@@ -23,11 +24,12 @@ type Port struct {
 }
 
 type apiContainer struct {
-	ID    string   `json:"Id"`
-	Names []string `json:"Names"`
-	Image string   `json:"Image"`
-	State string   `json:"State"`
-	Ports []struct {
+	ID      string   `json:"Id"`
+	Names   []string `json:"Names"`
+	Image   string   `json:"Image"`
+	ImageID string   `json:"ImageID"`
+	State   string   `json:"State"`
+	Ports   []struct {
 		PrivatePort int `json:"PrivatePort"`
 		PublicPort  int `json:"PublicPort"`
 	} `json:"Ports"`
@@ -53,7 +55,7 @@ func (c *Client) Containers(ctx context.Context) ([]Container, error) {
 		if len(r.Names) > 0 {
 			name = strings.TrimPrefix(r.Names[0], "/")
 		}
-		c := Container{ID: r.ID, Name: name, Image: r.Image, State: r.State}
+		c := Container{ID: r.ID, Name: name, Image: r.Image, ImageID: r.ImageID, State: r.State}
 		for _, p := range r.Ports {
 			if p.PublicPort != 0 {
 				c.Ports = append(c.Ports, Port{Public: p.PublicPort, Private: p.PrivatePort})

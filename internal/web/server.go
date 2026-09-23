@@ -33,6 +33,8 @@ func NewServer(dc *docker.Client, store *state.Store) *Server {
 	s.mux.HandleFunc("GET /events", s.sse)
 	s.mux.HandleFunc("POST /api/containers/{id}/{action}", s.action)
 	s.mux.HandleFunc("GET /api/containers/{id}/logs", s.logs)
+	s.mux.HandleFunc("GET /api/images", s.images)
+	s.mux.HandleFunc("DELETE /api/images/{id...}", s.removeImage)
 	s.mux.HandleFunc("GET /debug/goroutines", s.debugGoroutine)
 	s.mux.Handle("GET /static/", http.FileServerFS(assets))
 	return s

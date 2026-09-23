@@ -10,7 +10,7 @@ Docker の状態と**コンテナ同士のつながり**をブラウザで一望
 
 ## やらないこと
 
-認証、リモートホスト接続、イメージ管理・prune、compose の編集やデプロイ、履歴の永続化。
+認証、リモートホスト接続、prune、イメージの pull / build、compose の編集やデプロイ、履歴の永続化。
 コンテナ操作は start / stop / restart のみ。
 
 ## 起動
@@ -30,6 +30,7 @@ docker run -d --name ahab \
 - コンテナ一覧（名前 / イメージ / 状態 / 公開ポート / ネットワーク / CPU / メモリ）
 - start / stop / restart
 - ログ追従
+- イメージ一覧（タグ / ID / サイズ / 作成日時 / 使用中のコンテナ）と削除
 - 日本語 / English の切替、明 / 暗の切替（OS 設定に追随）
 
 Docker の `/events` と `/stats` をストリームで読み、Server-Sent Events でブラウザに push する。ポーリングしない。
