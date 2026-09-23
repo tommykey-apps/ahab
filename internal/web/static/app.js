@@ -232,7 +232,7 @@ function render(p) {
 
   $("[data-head]", p.root).innerHTML = cols.map((c) => {
     const sorted = c.key === p.sort.key;
-    const hcls = (c.cls || "").split(" ").filter((x) => x === "cell-num").join(" ");
+    const hcls = (c.cls || "").split(" ").filter((x) => x === "cell-num" || x === "cell-mobile-hidden" || x === "cell-name").join(" ");
     if (!c.sortable) return `<th class="dads-table__col-header ${hcls}" scope="col">${esc(c.label)}</th>`;
     const icon = sorted
       ? (p.sort.dir === "asc"
@@ -262,6 +262,10 @@ function button(label, action, id, { danger = false, disabled = false, size = "x
   return `<button class="dads-button" type="button" data-size="${size}" data-type="outline" ${danger ? "data-danger" : ""} data-action="${action}" data-id="${esc(id)}" ${disabled ? "disabled" : ""}>${esc(label)}</button>`;
 }
 
+function imageName(name) {
+  return name.startsWith("sha256:") ? name.slice(7, 19) : name;
+}
+
 function stateChip(state) {
   const color = { running: "green", paused: "yellow", restarting: "yellow", dead: "red", removing: "red" }[state] || "gray";
   const label = t(`state.${state}`) === `state.${state}` ? state : t(`state.${state}`);
@@ -273,12 +277,12 @@ const containers = makePanel("containers", {
   match: (c, f, st) => (!st || c.State === st) && (!f || c.Name.toLowerCase().includes(f) || c.Image.toLowerCase().includes(f)),
   columns: () => [
     { key: "Name", label: t("col.name"), sortable: true, cls: "cell-name cell-nowrap", value: (c) => c.Name },
-    { key: "Image", label: t("col.image"), sortable: true, cls: "cell-mono", value: (c) => c.Image },
+    { key: "Image", label: t("col.image"), sortable: true, cls: "cell-mono cell-mobile-hidden", value: (c) => imageName(c.Image) },
     { key: "State", label: t("col.state"), sortable: true, value: (c) => c.State, html: (c) => stateChip(c.State) },
     { key: "CPU", label: t("col.cpu"), sortable: true, cls: "cell-num cell-nowrap", value: (c) => (c.State === "running" ? c.CPU : -1), html: (c) => (c.State === "running" ? `${fmtNumber(c.CPU, 1)} %` : '<span class="cell-muted">-</span>') },
     { key: "Memory", label: t("col.memory"), sortable: true, cls: "cell-num cell-nowrap", value: (c) => (c.State === "running" ? c.Memory : -1), html: (c) => (c.State === "running" ? esc(fmtBytes(c.Memory)) : '<span class="cell-muted">-</span>') },
-    { key: "Ports", label: t("col.ports"), sortable: false, cls: "cell-mono cell-nowrap", value: (c) => (c.Ports || []).map((p) => `${p.Public}:${p.Private}`).join(" "), html: (c) => (c.Ports || []).length ? esc((c.Ports || []).map((p) => `${p.Public}:${p.Private}`).join(" ")) : '<span class="cell-muted">-</span>' },
-    { key: "Networks", label: t("col.networks"), sortable: false, value: (c) => (c.Networks || []).join(" ") },
+    { key: "Ports", label: t("col.ports"), sortable: false, cls: "cell-mono cell-nowrap cell-mobile-hidden", value: (c) => (c.Ports || []).map((p) => `${p.Public}:${p.Private}`).join(" "), html: (c) => (c.Ports || []).length ? esc((c.Ports || []).map((p) => `${p.Public}:${p.Private}`).join(" ")) : '<span class="cell-muted">-</span>' },
+    { key: "Networks", label: t("col.networks"), sortable: false, cls: "cell-mobile-hidden", value: (c) => (c.Networks || []).join(" ") },
     { key: "actions", label: t("col.actions"), sortable: false, cls: "cell-actions", value: () => "", html: (c, p) => {
       const busy = p.busy.has(c.ID);
       const size = mobile.matches ? "sm" : "xs";
@@ -370,7 +374,7 @@ function appendLog(ts, text, isError) {
 function fmtLogTime(ts) {
   if (!/^\d{4}-\d{2}-\d{2}T/.test(ts)) return "";
   const d = new Date(ts);
-  return Number.isNaN(d.getTime()) ? "" : d.toLocaleTimeString(lang, { hour12: false });
+  return Number.isNaN(d.getTime()) ? "" : d.toLocaleTimeString(lang, { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
 function closeLogs(hide = true) {

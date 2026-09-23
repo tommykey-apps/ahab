@@ -124,6 +124,14 @@ body {
 .cell-nowrap { white-space: nowrap; }
 .cell-num { text-align: right; font-variant-numeric: tabular-nums; }
 .cell-name { font-weight: var(--font-weight-700); }
+.dads-table__table th.cell-name,
+.dads-table__table td.cell-name {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: var(--color-neutral-white);
+}
+.dads-table__table th.cell-name { background-color: var(--color-neutral-solid-gray-50); }
 .cell-muted { color: var(--color-neutral-solid-gray-600); }
 .cell-actions { white-space: nowrap; width: 1%; }
 .actions { display: flex; gap: calc(4 / 16 * 1rem); }
@@ -194,6 +202,10 @@ body {
 .confirm__actions { display: flex; justify-content: flex-end; gap: calc(12 / 16 * 1rem); }
 
 @media (max-width: 47.99rem) {
+  .dads-tab__list { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .dads-tab__list::-webkit-scrollbar { display: none; }
+  .dads-tab__tab { white-space: nowrap; }
+  .cell-mobile-hidden { display: none; }
   .app-header__inner { padding: calc(8 / 16 * 1rem) calc(16 / 16 * 1rem); }
   .app-header__tools { gap: calc(8 / 16 * 1rem); }
   .toolbar__page-size { margin-left: 0; }
