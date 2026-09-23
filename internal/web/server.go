@@ -2,12 +2,15 @@ package web
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/tommykey-apps/ahab/internal/docker"
 	"github.com/tommykey-apps/ahab/internal/state"
@@ -66,16 +69,36 @@ func (s *Server) logs(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	rc := http.NewResponseController(w)
 
+	since := ""
+	var lastT time.Time
+	if last := r.Header.Get("Last-Event-ID"); last != "" {
+		if t, err := time.Parse(time.RFC3339Nano, last); err == nil {
+			since = fmt.Sprintf("%d.%09d", t.Unix(), t.Nanosecond())
+			lastT = t
+		}
+	}
+
 	lines := make(chan string)
-	go func() { _ = s.docker.Logs(r.Context(), r.PathValue("id"), lines) }()
+	errc := make(chan error, 1)
+	go func() { errc <- s.docker.Logs(r.Context(), r.PathValue("id"), since, lines) }()
 	for {
 		select {
 		case l := <-lines:
-			l = strings.ReplaceAll(strings.TrimRight(l, "\n"), "\n", "\ndata: ")
-			fmt.Fprintf(w, "data: %s\n\n", l)
+			ts, body, _ := strings.Cut(l, " ")
+			if t, err := time.Parse(time.RFC3339Nano, ts); err == nil && !t.After(lastT) {
+				continue
+			}
+			body = strings.ReplaceAll(strings.TrimRight(body, "\n"), "\n", "\ndata: ")
+			fmt.Fprintf(w, "id: %s\ndata: %s\n\n", ts, body)
 			if err := rc.Flush(); err != nil {
 				return
 			}
+		case err := <-errc:
+			if !errors.Is(err, io.EOF) && r.Context().Err() == nil {
+				fmt.Fprintf(w, "event: logerror\ndata: %s\n\n", err)
+				rc.Flush()
+			}
+			return
 		case <-r.Context().Done():
 			return
 		}
