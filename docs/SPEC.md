@@ -31,6 +31,7 @@ docker run -d --name ahab \
 - start / stop / restart
 - ログ追従
 - イメージ一覧（タグ / ID / サイズ / 作成日時 / 使用中のコンテナ）と削除
+- ボリューム一覧（名前 / ドライバ / 作成日時 / 使用中）と削除
 - 日本語 / English の切替、明 / 暗の切替（OS 設定に追随）
 
 Docker の `/events` と `/stats` をストリームで読み、Server-Sent Events でブラウザに push する。ポーリングしない。
