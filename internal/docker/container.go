@@ -16,6 +16,7 @@ type Container struct {
 	State    string
 	Ports    []Port
 	Networks []string
+	Volumes  []string
 }
 
 type Port struct {
@@ -36,6 +37,10 @@ type apiContainer struct {
 	NetworkSettings struct {
 		Networks map[string]struct{} `json:"Networks"`
 	} `json:"NetworkSettings"`
+	Mounts []struct {
+		Type string `json:"Type"`
+		Name string `json:"Name"`
+	} `json:"Mounts"`
 }
 
 func (c *Client) Containers(ctx context.Context) ([]Container, error) {
@@ -65,8 +70,26 @@ func (c *Client) Containers(ctx context.Context) ([]Container, error) {
 			c.Networks = append(c.Networks, n)
 		}
 		sort.Strings(c.Networks)
+		for _, m := range r.Mounts {
+			if m.Type == "volume" && !isAnonymous(m.Name) {
+				c.Volumes = append(c.Volumes, m.Name)
+			}
+		}
+		sort.Strings(c.Volumes)
 		cs = append(cs, c)
 	}
 	sort.Slice(cs, func(i, j int) bool { return cs[i].Name < cs[j].Name })
 	return cs, nil
+}
+
+func isAnonymous(name string) bool {
+	if len(name) != 64 {
+		return false
+	}
+	for _, r := range name {
+		if !(r >= '0' && r <= '9' || r >= 'a' && r <= 'f') {
+			return false
+		}
+	}
+	return true
 }

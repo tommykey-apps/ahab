@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/tommykey-apps/ahab/internal/docker"
+	"github.com/tommykey-apps/ahab/internal/graph"
 	"github.com/tommykey-apps/ahab/internal/state"
 )
 
@@ -37,6 +38,7 @@ func NewServer(dc *docker.Client, store *state.Store) *Server {
 	s.mux.HandleFunc("DELETE /api/images/{id...}", s.removeImage)
 	s.mux.HandleFunc("GET /api/volumes", s.volumes)
 	s.mux.HandleFunc("DELETE /api/volumes/{name}", s.removeVolume)
+	s.mux.HandleFunc("GET /api/graph", s.graph)
 	s.mux.HandleFunc("GET /debug/goroutines", s.debugGoroutine)
 	s.mux.Handle("GET /static/", http.FileServerFS(assets))
 	return s
@@ -107,6 +109,16 @@ func (s *Server) logs(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func (s *Server) graph(w http.ResponseWriter, r *http.Request) {
+	views := s.store.Get()
+	cs := make([]docker.Container, 0, len(views))
+	for _, v := range views {
+		cs = append(cs, v.Container)
+	}
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	io.WriteString(w, graph.Render(cs))
 }
 
 func (s *Server) debugGoroutine(w http.ResponseWriter, r *http.Request) {
