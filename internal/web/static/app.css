@@ -97,6 +97,7 @@ body {
   margin-left: auto;
 }
 .app-header .dads-menu-list-box__opener-icon { margin-right: 0; }
+.app-header .dads-menu-list-box__popup { left: auto; right: 0; }
 
 .app-main {
   max-width: calc(1440 / 16 * 1rem);
