@@ -4,10 +4,10 @@ Docker の状態とコンテナ同士のつながりをブラウザで一望す�
 
     docker run -d --name ahab \
       -v /var/run/docker.sock:/var/run/docker.sock \
-      -p 8080:8080 \
+      -p 18510:8080 \
       ghcr.io/tommykey-apps/ahab
 
-http://localhost:8080
+http://localhost:18510
 
 ローカル専用。認証機構は無いのでネットに公開しないこと。
 Docker socket にアクセスできる = ホストの root 相当の権限を持つ。
