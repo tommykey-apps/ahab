@@ -7,6 +7,8 @@
 
 Docker の状態とコンテナ同士のつながりをブラウザで一望する常駐ダッシュボード。
 
+<p align="center"><img src="docs/demo.gif" alt="コンテナの停止と起動、ログ追従、イメージとボリュームの一覧、構成図、明暗切替の操作" width="960"></p>
+
     docker run -d --name ahab \
       -v /var/run/docker.sock:/var/run/docker.sock \
       -p 18510:8080 \
