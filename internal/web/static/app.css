@@ -195,6 +195,22 @@ body {
 .logs__out .ts { color: var(--ahab-log-muted); }
 .logs__out .err { color: var(--color-semantic-error-1); }
 
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(4 / 16 * 1rem) calc(16 / 16 * 1rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-neutral-solid-gray-600);
+  font-size: var(--font-size-14);
+}
+.legend li { display: inline-flex; align-items: center; gap: calc(6 / 16 * 1rem); }
+.legend svg { width: calc(32 / 16 * 1rem); height: calc(20 / 16 * 1rem); flex: none; }
+.legend__node { fill: var(--color-key-50); stroke: var(--color-key-900); stroke-width: 1.5; }
+.legend__edge { fill: none; stroke: var(--color-neutral-solid-gray-600); stroke-width: 1.5; }
+.legend__arrow { fill: var(--color-neutral-solid-gray-600); }
+
 .graph { overflow: auto; padding: calc(8 / 16 * 1rem) 0; letter-spacing: 0; overflow-wrap: normal; }
 .graph svg { max-width: 100%; height: auto; }
 
