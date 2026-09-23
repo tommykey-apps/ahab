@@ -210,9 +210,6 @@ body {
 .confirm__actions { display: flex; justify-content: flex-end; gap: calc(12 / 16 * 1rem); }
 
 @media (max-width: 47.99rem) {
-  .dads-tab__list { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .dads-tab__list::-webkit-scrollbar { display: none; }
-  .dads-tab__tab { white-space: nowrap; }
   .cell-mobile-hidden { display: none; }
   .app-header__inner { padding: calc(8 / 16 * 1rem) calc(16 / 16 * 1rem); }
   .app-header__tools { gap: calc(8 / 16 * 1rem); }
