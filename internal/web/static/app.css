@@ -74,6 +74,9 @@ body {
   padding: calc(12 / 16 * 1rem) calc(16 / 16 * 1rem);
 }
 .app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(8 / 16 * 1rem);
   font-size: var(--font-size-20);
   font-weight: var(--font-weight-700);
   letter-spacing: 0.04em;
@@ -82,6 +85,11 @@ body {
 }
 .app-header__brand:hover,
 .app-header__brand:visited { color: var(--color-neutral-solid-gray-900); }
+.app-header__logo {
+  width: calc(24 / 16 * 1rem);
+  height: calc(24 / 16 * 1rem);
+  color: var(--color-key-900);
+}
 .app-header__status { align-self: center; }
 .app-header__tools {
   display: flex;
