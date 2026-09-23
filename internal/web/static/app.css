@@ -58,6 +58,9 @@ body {
 }
 
 .app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   border-bottom: calc(1 / 16 * 1rem) solid var(--color-neutral-solid-gray-300);
   background-color: var(--color-neutral-white);
 }
@@ -216,13 +219,23 @@ body {
   .pager .dads-button {
     transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
   }
-  .dads-switch-mode__thumb { transition: left 150ms ease, background-color 150ms ease; }
+  .dads-switch-mode__thumb { transition: left 200ms ease, background-color 200ms ease; }
+  :root[data-theme-transition] *,
+  :root[data-theme-transition] *::before,
+  :root[data-theme-transition] *::after {
+    transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease, fill 300ms ease, stroke 300ms ease, box-shadow 300ms ease !important;
+  }
   .dads-modal-dialog[open],
   .dads-modal-dialog[open]::backdrop,
   .notices > *,
-  .dads-tab__panel:not([hidden]),
   .dads-menu-list-box__popup:not([hidden]) {
     animation: ahab-fade-in 150ms ease;
+  }
+  .dads-tab__panel:not([hidden]) {
+    animation: ahab-panel-in 220ms ease;
+  }
+  @keyframes ahab-panel-in {
+    from { opacity: 0; transform: translateY(calc(6 / 16 * 1rem)); }
   }
   @keyframes ahab-fade-in {
     from { opacity: 0; }
