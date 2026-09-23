@@ -61,11 +61,20 @@ func (c *Client) Containers(ctx context.Context) ([]Container, error) {
 			name = strings.TrimPrefix(r.Names[0], "/")
 		}
 		c := Container{ID: r.ID, Name: name, Image: r.Image, ImageID: r.ImageID, State: r.State}
+		seen := map[Port]bool{}
 		for _, p := range r.Ports {
-			if p.PublicPort != 0 {
-				c.Ports = append(c.Ports, Port{Public: p.PublicPort, Private: p.PrivatePort})
+			port := Port{Public: p.PublicPort, Private: p.PrivatePort}
+			if p.PublicPort != 0 && !seen[port] {
+				seen[port] = true
+				c.Ports = append(c.Ports, port)
 			}
 		}
+		sort.Slice(c.Ports, func(i, j int) bool {
+			if c.Ports[i].Public != c.Ports[j].Public {
+				return c.Ports[i].Public < c.Ports[j].Public
+			}
+			return c.Ports[i].Private < c.Ports[j].Private
+		})
 		for n := range r.NetworkSettings.Networks {
 			c.Networks = append(c.Networks, n)
 		}

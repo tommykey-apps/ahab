@@ -30,20 +30,26 @@ func Render(cs []docker.Container) string {
 
 	networks := map[string]bool{}
 	volumes := map[string]bool{}
-	hasHostPort := false
+	hasHost := false
 	for _, c := range cs {
 		for _, n := range c.Networks {
-			networks[n] = true
+			switch n {
+			case "none":
+			case "host":
+				hasHost = true
+			default:
+				networks[n] = true
+			}
 		}
 		for _, v := range c.Volumes {
 			volumes[v] = true
 		}
 		if len(c.Ports) > 0 {
-			hasHostPort = true
+			hasHost = true
 		}
 	}
 
-	if hasHostPort {
+	if hasHost {
 		b.WriteString("  host{{\"host\"}}\n")
 	}
 	for _, n := range sorted(networks) {
@@ -59,7 +65,13 @@ func Render(cs []docker.Container) string {
 		id := nodeID("c", c.Name)
 		fmt.Fprintf(&b, "  %s[%q]\n", id, c.Name)
 		for _, n := range sortedSlice(c.Networks) {
-			fmt.Fprintf(&b, "  %s --> %s\n", id, nodeID("n", n))
+			switch n {
+			case "none":
+			case "host":
+				fmt.Fprintf(&b, "  host --- %s\n", id)
+			default:
+				fmt.Fprintf(&b, "  %s --> %s\n", id, nodeID("n", n))
+			}
 		}
 		for _, p := range c.Ports {
 			fmt.Fprintf(&b, "  host -->|\":%d→%d\"| %s\n", p.Public, p.Private, id)

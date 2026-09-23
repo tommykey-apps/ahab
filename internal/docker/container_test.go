@@ -7,14 +7,14 @@ import (
 	"testing"
 )
 
-func TestContainers_名前付きボリュームだけ拾いソートする(t *testing.T) {
+func TestContainers_公開ポートの重複を除き名前付きボリュームだけ拾う(t *testing.T) {
 	c := newTestClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/"+apiVersion+"/containers/json" || r.URL.Query().Get("all") != "1" {
 			t.Errorf("unexpected request %s", r.URL)
 		}
 		w.Write([]byte(`[
 		 {"Id":"b","Names":["/web"],"Image":"nginx","ImageID":"sha256:x","State":"running",
-		  "Ports":[{"PrivatePort":80,"PublicPort":8080},{"PrivatePort":443}],
+		  "Ports":[{"PrivatePort":80,"PublicPort":8080},{"PrivatePort":80,"PublicPort":8080},{"PrivatePort":443}],
 		  "NetworkSettings":{"Networks":{"front":{},"back":{}}},
 		  "Mounts":[{"Type":"volume","Name":"zdata"},{"Type":"bind","Name":""},
 		            {"Type":"volume","Name":"adata"},

@@ -73,3 +73,21 @@ func TestNodeID_記号は_アンダースコアに置き換える(t *testing.T) 
 		t.Fatalf("got %q", got)
 	}
 }
+
+func TestRender_noneは描かずhostはhostノードに直結する(t *testing.T) {
+	got := Render([]docker.Container{
+		{Name: "isolated", Networks: []string{"none"}},
+		{Name: "hostnet", Networks: []string{"host"}},
+	})
+	if strings.Contains(got, "none") {
+		t.Errorf("none must not appear:\n%s", got)
+	}
+	for _, want := range []string{`  host{{"host"}}`, `  host --- c_hostnet`, `  c_isolated["isolated"]`} {
+		if !strings.Contains(got, want) {
+			t.Errorf("missing %q in:\n%s", want, got)
+		}
+	}
+	if strings.Contains(got, `n_host(("host"))`) {
+		t.Errorf("host must not be a network node:\n%s", got)
+	}
+}
