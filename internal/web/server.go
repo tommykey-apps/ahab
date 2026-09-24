@@ -33,6 +33,7 @@ func NewServer(dc *docker.Client, store *state.Store) *Server {
 	s.mux.HandleFunc("GET /", s.index)
 	s.mux.HandleFunc("GET /events", s.sse)
 	s.mux.HandleFunc("POST /api/containers/{id}/{action}", s.action)
+	s.mux.HandleFunc("DELETE /api/containers/{id}", s.removeContainer)
 	s.mux.HandleFunc("GET /api/containers/{id}/logs", s.logs)
 	s.mux.HandleFunc("GET /api/images", s.images)
 	s.mux.HandleFunc("DELETE /api/images/{id...}", s.removeImage)
@@ -67,6 +68,15 @@ func (s *Server) action(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *Server) removeContainer(w http.ResponseWriter, r *http.Request) {
+	force := r.URL.Query().Get("force") == "1"
+	if err := s.docker.RemoveContainer(r.Context(), r.PathValue("id"), force); err != nil {
+		writeDockerError(w, err)
+		return
+	}
 	w.WriteHeader(http.StatusNoContent)
 }
 
