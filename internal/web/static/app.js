@@ -291,6 +291,7 @@ const containers = makePanel("containers", {
         on ? button(t("action.stop"), "stop", c.ID, { disabled: busy, size }) : button(t("action.start"), "start", c.ID, { disabled: busy, size }),
         button(t("action.restart"), "restart", c.ID, { disabled: busy, size }),
         button(t("action.logs"), "logs", c.ID, { size }),
+        button(t("action.delete"), "delete", c.ID, { danger: true, disabled: busy, size }),
       ].join("")}</div>`;
     } },
   ],
@@ -298,6 +299,10 @@ const containers = makePanel("containers", {
     const c = p.data.find((x) => x.ID === id);
     if (!c) return;
     if (action === "logs") return openLogs(c);
+    if (action === "delete") {
+      if (!(await confirmDialog({ title: t("confirm.deleteContainer.title"), body: t("confirm.deleteContainer.body", { name: c.Name }), okLabel: t("action.delete") }))) return;
+      return removeResource(p, id, c.Name, `/api/containers/${encodeURIComponent(id)}`, true);
+    }
     p.busy.add(id);
     render(p);
     try {

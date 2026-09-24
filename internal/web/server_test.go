@@ -40,6 +40,16 @@ func fakeDocker(t *testing.T) http.Handler {
 	mux.HandleFunc("DELETE /v1.44/volumes/{name}", func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"message":"volume is in use"}`, http.StatusConflict)
 	})
+	mux.HandleFunc("DELETE /v1.44/containers/{id}", func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.PathValue("id") == "missing":
+			http.Error(w, `{"message":"No such container: missing"}`, http.StatusNotFound)
+		case r.PathValue("id") == "running" && r.URL.Query().Get("force") != "1":
+			http.Error(w, `{"message":"cannot remove a running container"}`, http.StatusConflict)
+		default:
+			w.WriteHeader(http.StatusNoContent)
+		}
+	})
 	mux.HandleFunc("POST /v1.44/containers/{id}/{action}", func(w http.ResponseWriter, r *http.Request) {
 		if r.PathValue("id") == "missing" {
 			http.Error(w, `{"message":"No such container"}`, http.StatusNotFound)
@@ -95,6 +105,22 @@ func TestAction_許可外と存在しないコンテナ(t *testing.T) {
 	}
 	if res, _ := do(t, "POST", srv.URL+"/api/containers/missing/start"); res.StatusCode != http.StatusBadGateway {
 		t.Errorf("missing: %d", res.StatusCode)
+	}
+}
+
+func TestRemoveContainer_Dockerの404と409をそのまま返しforceで通る(t *testing.T) {
+	srv, _ := newTestServer(t)
+	if res, body := do(t, "DELETE", srv.URL+"/api/containers/running"); res.StatusCode != http.StatusConflict || !strings.Contains(body, "running container") {
+		t.Errorf("409: %d %q", res.StatusCode, body)
+	}
+	if res, _ := do(t, "DELETE", srv.URL+"/api/containers/running?force=1"); res.StatusCode != http.StatusNoContent {
+		t.Errorf("force: %d", res.StatusCode)
+	}
+	if res, body := do(t, "DELETE", srv.URL+"/api/containers/missing"); res.StatusCode != http.StatusNotFound || !strings.Contains(body, "No such container: missing") {
+		t.Errorf("404: %d %q", res.StatusCode, body)
+	}
+	if res, _ := do(t, "DELETE", srv.URL+"/api/containers/abc"); res.StatusCode != http.StatusNoContent {
+		t.Errorf("ok: %d", res.StatusCode)
 	}
 }
 

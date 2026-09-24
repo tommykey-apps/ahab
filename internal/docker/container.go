@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"sort"
 	"strings"
 )
@@ -101,4 +102,12 @@ func isAnonymous(name string) bool {
 		}
 	}
 	return true
+}
+
+func (c *Client) RemoveContainer(ctx context.Context, id string, force bool) error {
+	q := url.Values{"v": {"1"}}
+	if force {
+		q.Set("force", "1")
+	}
+	return c.remove(ctx, "/containers/"+url.PathEscape(id)+"?"+q.Encode())
 }
