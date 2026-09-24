@@ -158,9 +158,10 @@ func TestRemoveImage_Dockerの404と409をそのまま返す(t *testing.T) {
 }
 
 func TestVolumes_一覧と使用中の削除(t *testing.T) {
-	srv, _ := newTestServer(t)
+	srv, store := newTestServer(t)
+	store.Replace([]docker.Container{{ID: "c1", Name: "db", Volumes: []string{"pgdata"}}, {ID: "c2", Name: "web", Volumes: []string{"other"}}})
 	res, body := do(t, "GET", srv.URL+"/api/volumes")
-	if res.StatusCode != 200 || !strings.Contains(body, `"Name":"pgdata"`) || !strings.Contains(body, `"InUse":true`) {
+	if res.StatusCode != 200 || !strings.Contains(body, `"Name":"pgdata"`) || !strings.Contains(body, `"InUse":true`) || !strings.Contains(body, `"UsedBy":["db"]`) {
 		t.Errorf("list: %d %s", res.StatusCode, body)
 	}
 	if res, _ := do(t, "DELETE", srv.URL+"/api/volumes/pgdata"); res.StatusCode != http.StatusConflict {

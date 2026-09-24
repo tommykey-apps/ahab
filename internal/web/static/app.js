@@ -104,11 +104,13 @@ function dismissNotice(id) {
   $("#notices").querySelector(`[data-notice-id="${id}"]`)?.remove();
 }
 
-function confirmDialog({ title, body, okLabel }) {
+function confirmDialog({ title, body, okLabel, danger = true, cancelable = true }) {
   const dlg = $("#confirm");
   $("#confirm-title").textContent = title;
   $("#confirm-body").textContent = body;
   $("[data-confirm-ok]", dlg).textContent = okLabel;
+  $("[data-confirm-ok]", dlg).toggleAttribute("data-danger", danger);
+  $(".confirm__actions [data-confirm-cancel]", dlg).hidden = !cancelable;
   return new Promise((resolve) => {
     const done = (v) => { dlg.close(); resolve(v); };
     const ok = () => done(true);
@@ -318,12 +320,18 @@ const containers = makePanel("containers", {
 
 function connectEvents() {
   const es = new EventSource("/events");
+  let lastIDs = null;
   es.onopen = () => dismissNotice("connection");
   es.onmessage = (e) => {
     containers.data = JSON.parse(e.data) || [];
     containers.error = null;
     render(containers);
     if (graph.root.offsetParent !== null) scheduleGraph();
+    const ids = containers.data.map((c) => c.ID).sort().join("\n");
+    if (lastIDs !== null && ids !== lastIDs) {
+      for (const p of [images, volumes]) if (p.data !== null) load(p);
+    }
+    lastIDs = ids;
   };
   es.onerror = () => {
     if (containers.data === null) {
@@ -418,10 +426,22 @@ const volumes = makePanel("volumes", {
     { key: "Driver", label: t("col.driver"), sortable: true, cls: "cell-nowrap", value: (v) => v.Driver },
     { key: "Created", label: t("col.created"), sortable: true, cls: "cell-nowrap", value: (v) => v.Created, html: (v) => esc(fmtDate(v.Created)) },
     { key: "InUse", label: t("col.status"), sortable: true, value: (v) => (v.InUse ? 1 : 0), html: (v) => `<span class="dads-chip-label" data-style="outlined" data-color="${v.InUse ? "green" : "gray"}">${esc(t(v.InUse ? "volume.inUse" : "volume.unused"))}</span>` },
-    { key: "actions", label: t("col.actions"), sortable: false, cls: "cell-actions", value: () => "", html: (v, p) => `<div class="actions">${button(t("action.delete"), "delete", v.Name, { danger: true, disabled: v.InUse || p.busy.has(v.Name), size: mobile.matches ? "sm" : "xs" })}</div>` },
+    { key: "UsedBy", label: t("col.usedBy"), sortable: true, value: (v) => (v.UsedBy || []).join(" "), html: (v) => (v.UsedBy || []).length ? esc(v.UsedBy.join(", ")) : '<span class="cell-muted">-</span>' },
+    { key: "actions", label: t("col.actions"), sortable: false, cls: "cell-actions", value: () => "", html: (v, p) => `<div class="actions">${button(t("action.delete"), "delete", v.Name, { danger: true, disabled: p.busy.has(v.Name), size: mobile.matches ? "sm" : "xs" })}</div>` },
   ],
   onAction: async (p, action, name) => {
     if (action !== "delete") return;
+    const v = p.data.find((x) => x.Name === name);
+    if (!v) return;
+    if (v.InUse) {
+      const users = (v.UsedBy || []).join(", ");
+      await confirmDialog({
+        title: t("confirm.volumeInUse.title"),
+        body: users ? t("confirm.volumeInUse.body", { name, containers: users }) : t("confirm.volumeInUse.bodyUnknown", { name }),
+        okLabel: t("action.close"), danger: false, cancelable: false,
+      });
+      return;
+    }
     if (!(await confirmDialog({ title: t("confirm.deleteVolume.title"), body: t("confirm.deleteVolume.body", { name }), okLabel: t("action.delete") }))) return;
     await removeResource(p, name, name, `/api/volumes/${encodeURIComponent(name)}`, false);
   },

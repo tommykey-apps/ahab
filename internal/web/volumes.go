@@ -1,6 +1,15 @@
 package web
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/tommykey-apps/ahab/internal/docker"
+)
+
+type volumeView struct {
+	docker.Volume
+	UsedBy []string
+}
 
 func (s *Server) volumes(w http.ResponseWriter, r *http.Request) {
 	vols, err := s.docker.Volumes(r.Context())
@@ -8,7 +17,17 @@ func (s *Server) volumes(w http.ResponseWriter, r *http.Request) {
 		writeDockerError(w, err)
 		return
 	}
-	writeJSON(w, vols)
+	usedBy := map[string][]string{}
+	for _, c := range s.store.Get() {
+		for _, v := range c.Volumes {
+			usedBy[v] = append(usedBy[v], c.Name)
+		}
+	}
+	views := make([]volumeView, 0, len(vols))
+	for _, v := range vols {
+		views = append(views, volumeView{Volume: v, UsedBy: usedBy[v.Name]})
+	}
+	writeJSON(w, views)
 }
 
 func (s *Server) removeVolume(w http.ResponseWriter, r *http.Request) {
