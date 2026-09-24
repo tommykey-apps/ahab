@@ -192,6 +192,18 @@
             <input class="dads-input-text__input" id="images-filter" type="search" data-size="sm" autocomplete="off" data-filter data-i18n-attr="placeholder:filter.images" placeholder="タグ・ID で絞り込み">
           </span>
           <span class="toolbar__count" data-count></span>
+          <span class="dads-select toolbar__page-size">
+            <label class="dads-u-visually-hidden" for="images-page-size" data-i18n="pageSize.label">表示件数</label>
+            <span class="dads-select__control">
+              <select class="dads-select__select" id="images-page-size" data-size="sm" data-page-size>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="0" data-i18n="pageSize.all">すべて</option>
+              </select>
+              <svg class="dads-select__chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17L3 8L4 7L12 15L20 7L21 8L12 17Z" fill="currentcolor"/></svg>
+            </span>
+          </span>
           <button class="dads-button" type="button" data-size="sm" data-type="outline" data-reload data-i18n="action.reload">再読み込み</button>
         </div>
         <div class="panel__state" data-state-loading hidden>
@@ -214,6 +226,11 @@
             </table>
           </div>
         </dads-scroll-shadow>
+        <nav class="pager" data-pager hidden>
+          <button class="dads-button" type="button" data-size="sm" data-type="outline" data-pager-prev data-i18n="pager.prev">前へ</button>
+          <span class="pager__pos" data-pager-pos></span>
+          <button class="dads-button" type="button" data-size="sm" data-type="outline" data-pager-next data-i18n="pager.next">次へ</button>
+        </nav>
       </div>
 
       <div class="dads-tab__panel panel" id="panel-volumes" data-resource="volumes">
@@ -223,6 +240,18 @@
             <input class="dads-input-text__input" id="volumes-filter" type="search" data-size="sm" autocomplete="off" data-filter data-i18n-attr="placeholder:filter.volumes" placeholder="名前で絞り込み">
           </span>
           <span class="toolbar__count" data-count></span>
+          <span class="dads-select toolbar__page-size">
+            <label class="dads-u-visually-hidden" for="volumes-page-size" data-i18n="pageSize.label">表示件数</label>
+            <span class="dads-select__control">
+              <select class="dads-select__select" id="volumes-page-size" data-size="sm" data-page-size>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="0" data-i18n="pageSize.all">すべて</option>
+              </select>
+              <svg class="dads-select__chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17L3 8L4 7L12 15L20 7L21 8L12 17Z" fill="currentcolor"/></svg>
+            </span>
+          </span>
           <button class="dads-button" type="button" data-size="sm" data-type="outline" data-reload data-i18n="action.reload">再読み込み</button>
         </div>
         <div class="panel__state" data-state-loading hidden>
@@ -245,6 +274,11 @@
             </table>
           </div>
         </dads-scroll-shadow>
+        <nav class="pager" data-pager hidden>
+          <button class="dads-button" type="button" data-size="sm" data-type="outline" data-pager-prev data-i18n="pager.prev">前へ</button>
+          <span class="pager__pos" data-pager-pos></span>
+          <button class="dads-button" type="button" data-size="sm" data-type="outline" data-pager-next data-i18n="pager.next">次へ</button>
+        </nav>
       </div>
 
       <div class="dads-tab__panel panel" id="panel-graph" data-resource="graph">
